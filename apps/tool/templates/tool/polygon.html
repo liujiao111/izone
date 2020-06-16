@@ -1,0 +1,142 @@
+{% extends "tool/base_tool.html" %} {% load static %}
+
+<link href="{% static 'tool/css/layui.css' %}?v=20180107.08" rel="stylesheet"> {% block head_title %}POI矩形网格爬取{% endblock %} {% block metas %}
+<meta name="description" content="采用划分矩形网格的方式来采集大范围内的高德POI数据，可以成功避开接口只返回900条数据的限制">
+<meta name="keywords" content="高德POI矩形网格爬取,网格爬取,POI网格爬取,POI网格划分,POI矩形"> {% endblock %} {% block tool_name %}POI数据爬取{% endblock %} {% block left_content %}
+<div class="card-body p-0">
+	<h3 class="card-title pl-2 title-info">工具说明：</h3>
+	<ul>
+		<li>根据指定的城市划分为N多个矩形分别爬取高德POI数据，相比根据关键字爬取，数据量更为完整</li>
+		<li>由于服务器性能问题，最好下载代码在本地运行：地址：https://github.com/liujiao111/poi, 里面的poi-pology文件夹</li>
+		<li>城市：确定需要爬取的城市名，目前不支持多城市爬取，一次只能爬取一个城市的数据</li>
+		<li>数据可视化：<a style="margin-top:30px;color:#33ABA0" href="{% url 'tool:poi_visual' %}">点击这里</a></li>
+		<li>坐标转换：<a style="margin-top:30px;color:#33ABA0" href="{% url 'tool:coord_view' %}">点击这里</a></li>
+	</ul>
+</div>
+<form method="post" action="{% url 'tool:poi_polygon_data' %}">
+	{% if message %}
+	<p style="color:red;margin-left:150px;;height:30px;margin-bottom:20px">{{ message }}</p>
+	{% endif %}
+	<div class="mb-3">
+		<div class="form-group">
+			<label>城市：</label>
+			<div class="row" style="margin-left: 10px;">
+				<div class="col-xs-3">
+					<select id="province" onchange="selectProvince()" class="form-control" name="province" style="width: :100px;">
+						<option value="">请选择省或者直辖市</option>
+						<option value="410000">河南省</option>
+						<option value="440000">广东省</option>
+						<option value="150000">内蒙古自治区</option>
+						<option value="230000">黑龙江省</option>
+						<option value="650000">新疆维吾尔自治区</option>
+						<option value="420000">湖北省</option>
+						<option value="210000">辽宁省</option>
+						<option value="370000">山东省</option>
+						<option value="320000">江苏省</option>
+						<option value="610000">陕西省</option>
+						<option value="310000">上海市</option>
+						<option value="520000">贵州省</option>
+						<option value="500000">重庆市</option>
+						<option value="540000">西藏自治区</option>
+						<option value="340000">安徽省</option>
+						<option value="350000">福建省</option>
+						<option value="430000">湖南省</option>
+						<option value="460000">海南省</option>
+						<option value="630000">青海省</option>
+						<option value="450000">广西壮族自治区</option>
+						<option value="640000">宁夏回族自治区</option>
+						<option value="360000">江西省</option>
+						<option value="330000">浙江省</option>
+						<option value="130000">河北省</option>
+						<option value="810000">香港特别行政区</option>
+						<option value="710000">台湾省</option>
+						<option value="820000">澳门特别行政区</option>
+						<option value="620000">甘肃省</option>
+						<option value="510000">四川省</option>
+						<option value="220000">吉林省</option>
+						<option value="120000">天津市</option>
+						<option value="530000">云南省</option>
+						<option value="110000">北京市</option>
+						<option value="140000">山西省</option>
+
+					</select>
+				</div>
+				<div class="col-xs-3" style="margin-left: 20px;">
+					<select id="city" class="form-control" style="width: :100px;" name="city">
+						<option value="">请选择市</option>
+					</select>
+				</div>
+
+			</div>
+		</div>
+		<div class="form-group">
+			<label>分类关键字：</label>
+			<input type="text" class="form-control" name="keyword" placeholder="例如：酒店" required>
+			<small class="form-text text-muted">注：</small>
+		</div>
+		<div class="form-group">
+			<label>高德密钥：</label>
+			<input type="text" class="form-control" name="key" placeholder="" required>
+			<small class="form-text text-muted">注：自己去高德开放平台申请，类型记得是web服务，而不是web端等其他</small>
+		</div>
+		<div class="form-group">
+			<label>坐标系：</label>
+			<select id="coord" class="form-control" style="width: :100px;" name="coord">
+				<option value="">直接选择或搜索选择</option>
+				<option value="1">高德坐标系</option>
+				<option value="2">WGS84坐标系</option>
+				<option value="3">百度坐标系</option>
+
+			</select>
+			<small class="form-text text-muted">注：</small>
+		</div>
+		<button type="submit" class="btn btn-info btn-sm rounded-0">确定</button>
+
+	</div>
+
+	{% csrf_token %}
+</form>
+
+<div style="height:100px;margin-left:100px">
+	<a style="margin-top:30px;color:#33ABA0" href="{% url 'tool:poi_visual' %}">你可能还需POI数据可视化工具？点击这里快速实现可视化</a>
+</div>
+
+<script type="text/javascript" src="../../static/tool/js/distrinct.js"></script>
+<script type="text/javascript">
+	function selectProvince(e) {
+		var provinceCode = $("#province").val();
+		if(provinceCode == null || provinceCode == "") {
+			return;
+		}
+
+		$("#city").empty();
+		$("#city").append("<option value=''>请选择城市</option>")
+
+		$.ajax({
+			type: "get",
+			url: "{% url 'tool:subdistrict_data' %}",
+			data: {
+				code: provinceCode
+			},
+			async: true,
+			success: function(data) {
+
+				craeteOptions(data);
+
+			}
+		});
+	}
+
+	function craeteOptions(data) {
+		//data = $.parseJSON(data);
+		console.log(data.districts[0].districts.length);
+
+		var districts = data.districts[0].districts;
+
+		for(var i = 0; i < districts.length; i++) {
+			$("#city").append("<option value=" + districts[i].adcode + ">" + districts[i].name + "</option>")
+		}
+	}
+</script>
+
+{% endblock %} {% block end_f %} {% endblock %}

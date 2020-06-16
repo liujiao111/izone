@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+  <title>坐标拾取工具</title>
+  <meta name="description" content="一个强大的在线坐标拾取工具，支持多种地图底色选择，支持GCJ20、BD09、WGS84三种坐标系选择">
+  <meta name="keywords" content="坐标拾取工具,在线坐标拾取工具,高德坐标拾取,百度坐标拾取,坐标拾取"> 
+<link rel="shortcut icon" href="../../static/tool/img/favicon.ico" type="image/x-icon"/>
+  <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+  <style>
+    html,
+    body,
+    #container {
+      width: 100%;
+      height: 100%;
+    }
+
+    #map-styles .input-item {
+      height: 2rem;
+    }
+
+    #map-styles .input-item span{
+      display: inline-block;
+      width: 4rem;
+    }
+
+    #map-styles .input-item .input-text {
+      color: #0288d1;
+      margin-left: 1rem;
+      margin-right: 0rem;
+      width: 6rem;
+    }
+    
+    .mydiv{
+    	width: 200px;
+	  margin-left: 100px;
+	  margin-top: 5px;
+	  
+	}
+  </style>
+  
+  <script>
+			var _hmt = _hmt || [];
+			(function() {
+				var hm = document.createElement("script");
+				hm.src = "https://hm.baidu.com/hm.js?40648ca14434a0597e16e638e1f0607b";
+				var s = document.getElementsByTagName("script")[0];
+				s.parentNode.insertBefore(hm, s);
+			})();
+		</script>
+</head>
+
+<body>
+ <div id="myPageTop" class="mydiv" >
+    <table>
+        <tr>
+            <td>
+                <label>请输入关键字：</label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input style="border-radius: ;" id="tipinput"/>
+            </td>
+        </tr>
+    </table>
+</div>
+  <div id="container" style="margin-top: 15px;">
+ </div>
+  
+
+  <div class="info" >
+  
+  
+
+    <label>GCJ20坐标系：</label>
+    <input id="GCJ20-value" value=""/>
+    <label>BD09坐标系：</label>
+    <input id="BD09-value" value=""/>
+    <label>WGS84坐标系：</label>
+    <input id="WGS84-value" value=""/>
+</div>
+
+
+  <div class="input-card" style="width:15rem">
+    <h4>自定义地图样式</h4>
+    <div id="map-styles">
+      <div class="input-item">
+        <input type='radio' name='mapStyle' value='normal'>
+        <span>标准</span>
+        <span class="input-text"></span>
+      </div>
+      <div class="input-item"><input type='radio' name='mapStyle' value='dark'><span>幻影黑</span><span class="input-text"></span></div>
+      <div class="input-item"><input type='radio' name='mapStyle' value='light'><span>月光银</span><span class="input-text"></span></div>
+      <div class="input-item"><input type='radio' name='mapStyle' value='whitesmoke' checked><span>远山黛</span><span class="input-text"></span></div>
+      <div class="input-item"><input type='radio' name='mapStyle' value='fresh'><span>草色青</span><span class="input-text"></span></div>
+      <div class="input-item"><input type='radio' name='mapStyle' value='grey'><span>雅士灰</span><span class="input-text"></span></div>
+      <div class="input-item"><input type='radio' name='mapStyle' value='graffiti'><span>涂鸦</span><span class="input-text"></span></div>
+      <div class="input-item"><input type='radio' name='mapStyle' value='macaron'><span>马卡龙</span><span class="input-text"></span></div>
+      <div class="input-item"><input type='radio' name='mapStyle' value='blue'><span>靛青蓝</span><span class="input-text"></span></div>
+      <div class="input-item"><input type='radio' name='mapStyle' value='darkblue'><span>极夜蓝</span><span class="input-text"></span></div>
+      <div class="input-item"><input type='radio' name='mapStyle' value='wine'><span>酱籽</span><span class="input-text"></span></div>
+    </div>
+  </div>
+  <script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
+  <script src="https://webapi.amap.com/maps?v=1.4.15&key=e3c62575d8654fcb6e28279b46fdb9b0&plugin=AMap.Autocomplete,AMap.PlaceSearch"></script>
+
+  <script type="text/javascript" src="../../static/tool/js/coord-tansform.js" ></script>
+  
+  <script>
+    //初始化地图
+    var map = new AMap.Map('container', {
+      resizeEnable: true, //是否监控地图容器尺寸变化
+      mapStyle: "amap://styles/grey"
+    });
+
+    //绑定radio点击事件
+    var radios = document.querySelectorAll("#map-styles input");
+    radios.forEach(function(ratio) {
+      ratio.onclick = setMapStyle;
+    });
+    
+    //输入提示
+    var autoOptions = {
+        input: "tipinput"
+    };
+    var auto = new AMap.Autocomplete(autoOptions);
+    var placeSearch = new AMap.PlaceSearch({
+        map: map
+    });  //构造地点查询类
+    AMap.event.addListener(auto, "select", select);//注册监听，当选中某条记录时会触发
+    function select(e) {
+        placeSearch.setCity(e.poi.adcode);
+        placeSearch.search(e.poi.name);  //关键字查询查询
+    }
+
+    function setMapStyle() {
+      var styleName = "amap://styles/" + this.value;
+      map.setMapStyle(styleName);
+    }
+    
+    
+    function showInfoClick(e){
+     	var text = '您在 [ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ] 的位置单击了地图！'
+    	document.querySelector("#GCJ20-value").value = e.lnglat.getLng() +','+e.lnglat.getLat();
+    	var bd09_arr = gcj02tobd09(parseFloat(e.lnglat.getLng()), parseFloat(e.lnglat.getLat()));
+    	document.querySelector("#BD09-value").value = bd09_arr[0] +','+ bd09_arr[1];
+    	var wgs84_arr = gcj02towgs84(parseFloat(e.lnglat.getLng()), parseFloat(e.lnglat.getLat()));
+    	document.querySelector("#WGS84-value").value = wgs84_arr[0] +','+ wgs84_arr[1];
+    }
+    
+    //地图点击事件
+    map.on('click', showInfoClick);
+    
+  </script>
+</body>
+
+</html>

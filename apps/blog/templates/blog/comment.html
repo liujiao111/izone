@@ -1,0 +1,54 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block head_title %}留言{% endblock %}
+{% block metas %}
+<meta name="description"
+      content="本网站是一个采用django+bootstrap4搭建的个人博客，本着学习和分享的精神，博客项目开源，源代码可以到我的Github中查看，网站建站历程可以查看页面Timeline内容。">
+<meta name="keywords" content="网站About页面,关于网站,关于博主,关于站长">
+{% endblock %}
+
+
+{% block base_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8" style="line-height:2">
+            <div class="card rounded-0 border-0 p-3 f-16">
+                <h2 class="font-weight-bold">发表留言</h2>
+                <hr style="margin: .1rem;dashed #333;"/>
+               <form method="post" action="{% url 'blog:add_comment' %}">
+				{% if message %}
+					  <p style="color:red;margin-left:150px;;height:30px;margin-bottom:20px">{{ message }}</p>
+					  {% endif %}
+				<div class="mb-3">
+				    <textarea class="form-control" name="message" placeholder="随便说点意见或者建议吧..." rows="3"></textarea>
+				    
+				    <button type="submit" class="btn btn-info btn-sm rounded-0">确定</button>
+				    
+				</div>
+				
+				{% csrf_token %}
+			</form>
+                <h2 class="mt-2 font-weight-bold">留言列表</h2>
+                <hr style="margin: .1rem;dashed #333;"/>
+                <ul class="pl-4 ml-2">
+                    {% if contexts %}
+					  {% for row in contexts %}
+							<li>{{ row.name }}       {{ row.time }}</li>
+					  {% endfor %}
+					{% endif %}
+                </ul>
+               
+                
+            </div>
+        </div>
+        <div class="col-lg-4">
+            {% include 'blog/tags/base_right.html' %}
+        </div>
+        
+        <script type="text/javascript">
+        	//alert("查询留言列表");
+        </script>
+    </div>
+</div>
+{% endblock %}

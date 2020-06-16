@@ -1,0 +1,90 @@
+{% extends "tool/base_tool.html" %}
+{% load static %}
+
+{% block head_title %}渔网坐标生成{% endblock %}
+{% block metas %}
+<meta name="description" content="可以将指定的坐标范围生成渔网坐标，支持自定义渔网大小">
+<meta name="keywords" content="渔网坐标,渔网,ARCGIS,网格,矩形,矩形网格,网格生成,渔网坐标生成">
+{% endblock %}
+
+{% block tool_name %}渔网坐标生成{% endblock %}
+{% block left_content %}
+<div class="card-body p-0">
+    <h3 class="card-title pl-2 title-info">工具说明：</h3>
+    <ul>
+        <li>首先需要将需要爬取的城市最大经纬度和最小经纬度获取到，填入下面四个表单中</li>
+        <li>需要指定生成的渔网坐标间隔距离</li>
+
+    </ul>
+</div>
+<form method="get" action="{% url 'tool:grid_generate' %}">
+{% if message %}
+	<div class="alert alert-danger" role="alert">{{ message }}</div>
+
+	{% endif %}
+	<div class="mb-3">
+	    <div class="form-group">
+	        <label>最大经度：</label>
+	        <input type="text" class="form-control " name="max_lon"
+	               placeholder="例如：113.43545"
+	               required>
+
+	    </div>
+	    <div class="form-group">
+	        <label>最小经度：</label>
+	        <input type="text" class="form-control" name="min_lon"
+	               placeholder="例如：113.11345"
+	               required>
+
+	    </div>
+	    <div class="form-group">
+	        <label>最大纬度：</label>
+	        <input type="text" class="form-control" name="max_lat"
+	               placeholder="例如：23.43545"
+	               required>
+
+	    </div>
+	    <div class="form-group">
+	        <label>最小纬度：</label>
+	        <input type="text" class="form-control"  name="min_lat"
+	               placeholder="例如：22.2457"
+	               required>
+
+	    </div>
+	    
+	    <div class="form-group">
+	        <label>网格间距：</label>
+	        <input type="text" class="form-control" value="2.6"  name="distance"
+	               placeholder="例如：2.5"
+	               required>
+	        <small class="form-text text-muted">注：单位为KM,推荐为2.6</small>
+	    </div>
+	    <button type="submit" class="btn btn-info btn-sm rounded-0">确定</button>
+	    
+	    <hr />
+	    <div class="form-group">
+	    	
+	        <label>生成结果：</label>
+	        {% if points %}
+	        	<label>总的{{ count }}个网格点</label>
+	        <textarea class="form-control" rows="5">{{ points }}</textarea>
+	        <br />
+		  		<a style="color:#33ABA0" target="_blank" href="{{file_path}}">点此下载文件</a>
+		  	{% endif %}
+		  	
+	    </div>
+	</div>
+	
+	
+</form>
+
+<div style="height:100px;margin-left:100px">
+  <a target="_blank" style="margin-top:30px;color:#33ABA0" href="{% url 'tool:yichuxing' %}">你可能还需宜出行人流量爬取工具？点击此处快速跳转</a>
+</div>
+
+
+
+{% endblock %}
+
+{% block end_f %}
+{% endblock %}

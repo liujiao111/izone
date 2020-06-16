@@ -1,0 +1,115 @@
+{% extends "tool/base_tool.html" %} {% load static %}
+
+<link href="{% static 'tool/css/layui.css' %}?v=20180107.08" rel="stylesheet"> {% block head_title %}坐标转换工具{% endblock %} {% block metas %}
+<meta name="description" content="Sitemap主动推送是百度主动推送工具的升级版，可以在线实时自动提交链接，首先使用正则表达式批量抓取网站sitemap页面所有链接，然后调用百度站长平台的主动推送接口，批量推送链接，加快抓取速度和百度收录效率。">
+<meta name="keywords" content="百度主动推送,站长工具,在线工具,sitemap,自动提交,百度收录,实时提交"> {% endblock %} {% block tool_name %}坐标转换工具{% endblock %} {% block left_content %}
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" crossorigin="anonymous">
+<link href="../../static/tool/css/fileinput.css" media="all" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" crossorigin="anonymous">
+<link href="../../static/tool/themes/explorer-fas/theme.css" media="all" rel="stylesheet" type="text/css" />
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="../../static/tool/js/plugins/piexif.js" type="text/javascript"></script>
+<script src="../../static/tool/js/plugins/sortable.js" type="text/javascript"></script>
+<script src="../../static/tool/js/fileinput.js" type="text/javascript"></script>
+<script src="../../static/tool/js/locales/fr.js" type="text/javascript"></script>
+<script src="../../static/tool/js/locales/es.js" type="text/javascript"></script>
+<script src="../../static/tool/themes/fas/theme.js" type="text/javascript"></script>
+<script src="../../static/tool/themes/explorer-fas/theme.js" type="text/javascript"></script>
+<style type="text/css">
+a {color: black}
+</style>
+<div class="card-body p-0">
+	<h3 class="card-title pl-2 title-info">工具说明：</h3>
+	<ul>
+		<li>支持国内主流的三种坐标系互转：百度BD09坐标系，高德GCJ20坐标系和WGS84坐标系</li>
+		<li>支持xls以及CSV两种格式的数据，建议CSV优先。</li>
+		<li>.xls格式的文件需要保证第一列第二列分别为经度、纬度,示例文件：<a style="color:#33ABA0" href="{% url "tool:common_file_download_coord" %}">点击下载</a></li>
+		<li>CSV文件需要有lon, lat两个表头，代表经度和纬度</li>
+	</ul>
+</div>
+
+{% if message %}
+	<div class="alert alert-danger" role="alert">{{ message }}</div>
+
+	{% endif %}
+<form id="boundaryform" action="{% url "tool:poicoordtransform" %}" method="post">
+	<input style="display: none;" id="filename" name="filename"/>
+	<label>源坐标系：</label>
+	        <select id="orgcoord" name="orgcoord" class="form-control">
+			  	<option value="">直接选择或搜索选择</option>
+				<option value="1">高德坐标系</option>
+				<option value="2">WGS84坐标系</option>
+				<option value="3">百度坐标系</option>
+			</select>
+	<label>目标坐标系：</label>
+	       <select id="targetcoord" name="targetcoord" class="form-control">
+			  	<option value="">直接选择或搜索选择</option>
+				<option value="1">高德坐标系</option>
+				<option value="2">WGS84坐标系</option>
+				<option value="3">百度坐标系</option>
+			</select>
+<form style="margin-left: 100px;" enctype="multipart/form-data">
+	<div class="form-group">
+	        
+	<!-- 就是一个简单的文件表单字段 -->
+	<label class="control-label" for="testfile">上传文件</label>
+	<input type="file" id="testfile" name="myfile" multiple /> {% csrf_token %}
+</form>
+
+
+
+
+
+<br />
+<button id="getboundary" type="button" class="btn btn-info btn-sm rounded-0">确定</button>
+</form>
+<script>
+	var token = "{{csrf_token}}";
+
+	$('#testfile').fileinput({
+		language: 'zh',
+		uploadUrl:  "{% url "tool:common_file_upload" %}",
+		showCaption: true,
+		showUpload: true,
+		showRemove: true,
+		showClose: true,
+		uploadAsync : true,
+		layoutTemplates: {
+			actionDelete: ''
+		},
+		browseClass: 'btn btn-primary',
+	uploadExtraData: {
+		"csrfmiddlewaretoken" : token
+	}
+	}).on('fileuploaded', function(e, params){
+		if(params.response.status == "200") {
+			var file_path = params.response.file_path;
+			$("#filename").val(file_path);
+
+		}else {
+			alert("文件上传失败");
+		}
+
+		
+	});
+	
+	
+	$("#getboundary").on('click', function(){
+		var filename = $("#filename").val();
+		var orgcoord = $("#orgcoord").val();
+		var orgcoord = $("#orgcoord").val();
+		if(filename == "") {
+			alert("请上传后再操作");
+			return;
+		}
+		if(orgcoord == "" || targetcoord == "") {
+			alert("请选择坐标系");
+			return;
+		}	
+		$("#boundaryform").submit();
+	})
+</script>
+
+{% endblock %} {% block end_f %} {% endblock %}

@@ -1,0 +1,37 @@
+
+#  拉取分支代码(v1-1.0，不需要mysql和redis支持)
+git clone -b v1-1.0 git@github.com:Hopetree/izone.git
+
+
+# 安装依赖
+pip install -r requirements.txt -i http://pypi.douban.com/simple --trusted-host pypi.douban.com
+
+
+## 安装失败
+将offile啥的干掉
+
+
+# 创建数据库
+python manage.py makemigrations
+
+# 数据库迁移
+python manage.py migrate
+
+# 创建管理员用户
+python manage.py createsuperuser
+
+# 运行程序
+python manage.py runserver --port 80
+
+
+# django运行后在别的计算机上访问不了的解决方案
+在izon/setting.py中设置ALLOWED_HOSTS = ['*']
+
+在启动的命令修改为：python manage.py runserver 0.0.0.0:80  表示允许其他IP访问
+
+加上后台运行
+screen -S mapboxxblog
+
+再执行：python manage.py runserver 0.0.0.0:80
+
+关闭SSH窗口

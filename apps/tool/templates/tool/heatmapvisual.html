@@ -1,0 +1,137 @@
+{% extends "tool/base_tool.html" %} {% load static %}
+
+{% block head_title %}热力图在线可视化{% endblock %} {% block metas %}
+<meta name="description" content="基于百度Echarts实现的热力图数据在线可视化工具，用户上传数据文件，即可实时看到热力图效果">
+<meta name="keywords" content="热力图,热力图可视化,echarts,热力图在线可视化,可视化工具,热力图可视化平台"> {% endblock %} {% block tool_name %}POI数据爬取{% endblock %} {% block left_content %}
+<link rel="shortcut icon" href="../../static/tool/img/favicon.ico" type="image/x-icon"/>
+		<link rel="stylesheet" href="../../static/tool/css/layui.css" />
+		<script type="text/javascript" src="../../static/tool/js/layui.js"></script>
+		<script type="text/javascript" src="../../static/tool/js/jquery-3.4.1.min.js.js"></script>
+		<script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=99jC47pfOjXWm0umboUO0sz1EpoWi1rg"></script>
+		       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat/dist/ecStat.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/bmap.min.js"></script>
+
+		<script>
+			var _hmt = _hmt || [];
+			(function() {
+				var hm = document.createElement("script");
+				hm.src = "https://hm.baidu.com/hm.js?40648ca14434a0597e16e638e1f0607b";
+				var s = document.getElementsByTagName("script")[0];
+				s.parentNode.insertBefore(hm, s);
+			})();
+		</script>
+
+
+<body style="margin-top: 0px;">
+		
+		<div style="margin-top:10px;margin-left:40%">
+			文件：
+			<button type="button" class="layui-btn" id="test1">
+  <i class="layui-icon">&#xe67c;</i>上传.csv文件
+</button>
+			<br />
+			<span>文件要求：请上传.csv格式的文件，并保证第一、二、三列分别为纬度、经度、人数</span>
+		</div>
+{% csrf_token %}
+		<div id="allmap" style="height: 800px;width: 1100px;"></div>
+
+		<script type="text/javascript">
+			
+			var map = new BMap.Map("allmap");
+			var point = new BMap.Point(116.404, 39.915);
+			map.centerAndZoom(point, 15);
+			
+			map.enableScrollWheelZoom();
+			
+			// 编写自定义函数,创建标注
+			function addMarker(point) {
+				var marker = new BMap.Marker(point);
+				map.addOverlay(marker);
+			}
+			
+			for(var i = 0; i < 25; i++) {
+				var point = new BMap.Point(116.404, 39.915);
+				addMarker(point);
+			}
+
+
+			var token = "{{csrf_token}}";
+
+			layui.use('upload', function() {
+				var upload = layui.upload;
+
+				//执行实例
+				var uploadInst = upload.render({
+					elem: '#test1' //绑定元素
+						,
+					url: "{% url "tool:upload" %}" //上传接口
+						,
+						data: {csrfmiddlewaretoken: token,
+							"type":"heatmap"},
+					accept: 'file',
+					done: function(res) {
+						alert('上传成功，正在可视化中，请稍后......')
+						data = res;
+						console.log(data[0][0]['coord'][0])
+						center_lon = parseFloat(data[0][0]['coord'][0])
+					    center_lat = parseFloat(data[0][0]['coord'][1])
+					      var dom = document.getElementById("allmap");
+					    var myChart = echarts.init(dom);
+					    var app = {};
+					    option = null;
+					    app.title = '热力图与百度地图扩展';
+					
+					      var points = [].concat.apply([], data.map(function (track) {
+					        return track.map(function (seg) {
+					            return seg.coord.concat([1]);
+					        });
+					    }));
+					    myChart.setOption(option = {
+					        animation: false,
+					        bmap: {
+					            center: [center_lon, center_lat],
+					            zoom: 15,
+					            roam: true
+					        },
+					        visualMap: {
+					            show: false,
+					            top: 'top',
+					            min: 0,
+					            max: 20,
+					            seriesIndex: 0,
+					            calculable: true,
+					            inRange: {
+					                color: ['blue', 'blue', 'green', 'yellow', 'red']
+					            }
+					        },
+					        series: [{
+					            type: 'heatmap',
+					            coordinateSystem: 'bmap',
+					            data: points,
+					            pointSize: 30,
+					            blurSize: 22
+					        }]
+					    });
+					    if (!app.inNode) {
+					        // 添加百度地图插件
+					        var bmap = myChart.getModel().getComponent('bmap').getBMap();
+					        bmap.addControl(new BMap.MapTypeControl());
+					    }
+					;
+					if (option && typeof option === "object") {
+					    myChart.setOption(option, true);
+					}
+					}
+
+				});
+			});
+		</script>
+
+	</body>
+
+{% endblock %} {% block end_f %} {% endblock %}

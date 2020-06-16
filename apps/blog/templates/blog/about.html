@@ -1,0 +1,59 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block head_title %}关于网站{% endblock %}
+{% block metas %}
+<meta name="description"
+      content="本网站是一个采用django+bootstrap4搭建的个人博客，本着学习和分享的精神，博客项目开源，源代码可以到我的Github中查看，网站建站历程可以查看页面Timeline内容。">
+<meta name="keywords" content="网站About页面,关于网站,关于博主,关于站长">
+{% endblock %}
+
+
+{% block base_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8" style="line-height:2">
+            <div class="card rounded-0 border-0 p-3 f-16">
+                <h2 class="font-weight-bold">关于网站</h2>
+                <hr style="margin: .1rem;dashed #333;"/>
+                <ul class="pl-4 ml-2">
+                	<li>有问题请加群：626697156</li>
+                </ul>
+                <h2 class="mt-2 font-weight-bold">功能介绍</h2>
+                <hr style="margin: .1rem;dashed #333;"/>
+                <ul class="pl-4 ml-2">
+                    <li>腾讯位置大数据爬取：基于腾讯位置大数据实时采集人流量数据,缺点是精度不够高</li>
+                    <li>宜出行人流量爬取：基于微信宜出行实时采集人流量数据，精度还可以</li>
+                    <li>热力图在线可视化：上传有经纬度、人数的CSV文件，即可可视化人流量分布情况</li>
+                    <li>POI数据爬取：根据城市以及关键字爬取POI兴趣点数据</li>
+                    <li>划分矩形网格爬取POI数据</li>
+                    <li>渔网坐标生成工具：将大矩形坐标范围划分为多个渔网网格</li>
+                    <li>百度POI边界采集工具：根据百度POI数据的UID采集POI对应的边界坐标</li>
+                    <li>POI数据在线可视化：上传带有经纬度的EXCEL文件，即可可视化展示POI点分布情况</li>
+                    <li>坐标拾取工具：点击地图即可得到当前点的经纬度，并提供GCJ20、BD09、WGS84三种坐标</li>
+                    <li>坐标转换工具：上传带有经纬度的数据，可将经纬度转换为指定的坐标系数据</li>
+                </ul>
+                
+              
+                
+                <h2 class="mt-2 font-weight-bold">TODO</h2>
+                <hr style="margin: .1rem;dashed #333;"/>
+                <ul class="pl-4 ml-2">
+                	  <li>地理数据可视化平台</li>
+                    <li>地图圈选工具</li>
+                    <li>地图测距</li>
+                    <li>公交线路查询</li>
+                    <li>地铁线路查询</li>
+                    <li>全国各个行政区划边界数据采集</li>
+                		<li>更多功能正在构思中，有想法的也可留言，或者加群讨论。</li>
+                </ul>
+                
+                
+            </div>
+        </div>
+        <div class="col-lg-4">
+            {% include 'blog/tags/base_right.html' %}
+        </div>
+    </div>
+</div>
+{% endblock %}

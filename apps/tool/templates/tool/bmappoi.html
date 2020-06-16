@@ -1,0 +1,81 @@
+{% extends "tool/base_tool.html" %} {% load static %}
+
+{% block head_title %}百度POI数据采集{% endblock %} {% block metas %}
+<meta name="description" content="基于百度地图开放平台API接口实现的POI数据在线采集工具">
+<meta name="keywords" content="百度POI,百度POI采集,百度地图POI,POI采集,POI采集工具"> {% endblock %} {% block tool_name %}百度POI数据采集{% endblock %} {% block left_content %}
+<div class="card-body p-0">
+	<h3 class="card-title pl-2 title-info">工具说明：</h3>
+	<ul>
+		<li>基于百度地图实现的POI数据采集工具,可以采集指定经纬度范围内的POI</li>
+		<li>首先需要确定爬取 的范围，使用<a target="_blank" style="margin-top:30px;color:#33ABA0" href="{% url 'tool:coordpick' %}">坐标拾取系统</a>采集经纬度范围，将最大、最小的经纬度填入下面的表格中。</li>
+		<li>其次，需要在百度地图API开放平台申请百度密钥。</li>
+		<li>数据可视化：<a target="_blank" style="margin-top:30px;color:#33ABA0" href="{% url 'tool:poi_visual' %}">点击这里</a></li>
+		<li>坐标转换：<a style="margin-top:30px;color:#33ABA0" href="{% url 'tool:coord_view' %}">点击这里</a></li>
+	</ul>
+</div>
+<form method="post" action="{% url 'tool:bmappoidata' %}">
+	{% if message %}
+	<div class="alert alert-danger" role="alert">{{ message }}</div>
+	{% endif %}
+	
+	<div class="mb-3">
+		<div class="form-group">
+	        <label>最大经度：</label>
+	        <input type="text" class="form-control " value="114.00650422835264" name="max_lon"
+	               placeholder="例如：115.34343"
+	               required>
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+	    <div class="form-group">
+	        <label>最小经度：</label>
+	        <input type="text" class="form-control" value="113.80650422835264" name="min_lon"
+	               placeholder="例如：115.1234"
+	               required>
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+	    <div class="form-group">
+	        <label>最大纬度：</label>
+	        <input type="text" class="form-control" value="22.803672722381442" name="max_lat"
+	               placeholder="例如：32.703455"
+	               required>
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+	    <div class="form-group">
+	        <label>最小纬度：</label>
+	        <input type="text" class="form-control" value="22.603672722381442" name="min_lat"
+	               placeholder="例如：31.153543"
+	               required>
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+		<div class="form-group">
+			<label>分类关键字：</label>
+			<input type="text" class="form-control" name="keyword" placeholder="例如：住宅区" required>
+			<small class="form-text text-muted">注：</small>
+		</div>
+		<div class="form-group">
+			<label>百度密钥：</label>
+			<input type="text" class="form-control" name="key" placeholder="" required>
+			<small class="form-text text-muted">注：自己去百度开放平台申请，类型记得是web服务，而不是web端等其他</small>
+		</div>
+		<div class="form-group">
+			<label>坐标系：</label>
+			<select id="coord" class="form-control" style="width: :100px;" name="coord">
+				<option value="">直接选择或搜索选择</option>
+				<option value="1">高德坐标系</option>
+				<option value="2">WGS84坐标系</option>
+				<option value="3">百度坐标系</option>
+			</select>
+			<small class="form-text text-muted">注：</small>
+		</div>
+		<button type="submit" class="btn btn-info btn-sm rounded-0">确定</button>
+
+	</div>
+
+	{% csrf_token %}
+</form>
+
+<div style="height:100px;margin-left:100px">
+	<a style="margin-top:30px;color:#33ABA0" href="{% url 'tool:poi_visual' %}">你可能还需POI数据可视化工具？点击这里快速实现可视化</a>
+</div>
+
+{% endblock %} {% block end_f %} {% endblock %}

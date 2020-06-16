@@ -1,0 +1,250 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% load humanize %}
+{% load blog_tags %}
+
+{% block head_title %}在线地图工具{% endblock %}
+{% block metas %}
+<meta name="description" content="在线地图工具">
+<meta name="keywords" content="在线工具,地图相关,在线地图工具,在线可视化,POI数据爬取,POI数据采集,高德POI,坐标转换,坐标拾取工具,人流量,热力图可视化,数据可视化">
+{% endblock %}
+
+
+{% block top-file %}
+<link href="{% static 'tool/css/tool.css' %}?v=20180107.08" rel="stylesheet">
+{% endblock %}
+
+{% block base_content %}
+<div class="container">
+    <div class="row tool-list">
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:tencent' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/tencent.jpg' %}"
+                             alt="腾讯位置大数据热力数据采集">
+                        <h2 class="card-title">腾讯热力数据采集</h2>
+                    </a>
+                    <p class="mb-0">[数据采集工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">基于腾讯位置大数据实现的人流量实时采集, 数据保存为CSV格式提供浏览器下载到本地</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:yichuxing' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/宜出行人流量采集.png' %}"
+                             alt="宜出行人流量爬取">
+                        <h2 class="card-title">宜出行人流量采集</h2>
+                    </a>
+                    <p class="mb-0">[数据采集工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">宜出行人流量采集, 数据保存为CSV格式提供浏览器下载到本地</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:poi_view' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/map.png' %}"
+                             alt="POI数据爬取">
+                        <h2 class="card-title">高德POI数据采集</h2>
+                    </a>
+                    <p class="mb-0">[数据采集工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">基于高德地图实现的POI数据在线采集，可根据指定城市和分类爬取数据并导出为CSV</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:polygon_view' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/link-2.png' %}"
+                             alt="POI爬取(根据矩形范围)">
+                        <h2 class="card-title">矩形范围POI采集</h2>
+                    </a>
+                    <p class="mb-0">[数据采集工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">将指定的城市划分为N多个小矩形爬取高德POI数据，相比根据关键字采集，数据量更为完整</p>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:boundaryview' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/多边形边界.png' %}"
+                             alt="百度POI边界采集">
+                        <h2 class="card-title">百度POI边界采集</h2>
+                    </a>
+                    <p class="mb-0">[数据采集工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">根据百度地图POI UID采集对应的POI边界坐标数据(面)</p>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:bmappoi' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/bmap.png' %}"
+                             alt="百度POI数据采集">
+                        <h2 class="card-title">百度POI数据采集</h2>
+                    </a>
+                    <p class="mb-0">[数据采集工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">调用百度API接口完成POI数据采集</p>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:heatmap_visual' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/chrome.png' %}"
+                             alt="User-热力图在线可视化">
+                        <h2 class="card-title">热力图在线可视化</h2>
+                    </a>
+                    <p class="mb-0">[数据可视化工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">基于百度Echarts实现的热力数据可视化，上传数据文件即可看到可视化结果</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:poi_visual' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/regex.png' %}"
+                             alt="POI数据在线可视化">
+                        <h2 class="card-title">POI数据在线可视化</h2>
+                    </a>
+                    <p class="mb-0">[数据可视化工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">基于百度地图实现的POI数据点在线可视化，上传指定格式的EXCEL数据文件即可看到可视化结果</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:coordpick' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/shiqu.png' %}"
+                             alt="坐标拾取工具">
+                        <h2 class="card-title">坐标拾取工具</h2>
+                    </a>
+                    <p class="mb-0">[地图工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">点击地图即可得到对应点坐标，并显示对应的不同坐标系的坐标</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:coord_view' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/coord.png' %}"
+                             alt="坐标转换工具">
+                        <h2 class="card-title">坐标转换工具</h2>
+                    </a>
+                    <p class="mb-0">[地图工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">在线实现地理数据坐标转换，支持百度坐标系、高德坐标系、WGS84坐标系互转</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:coord_view' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/coord.png' %}"
+                             alt="地理编码工具">
+                        <h2 class="card-title">地理编码工具</h2>
+                    </a>
+                    <p class="mb-0">[地图工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">在线实现地址数据批量查询对应经纬度等信息</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:coord_view' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/coord.png' %}"
+                             alt="地理逆编码工具">
+                        <h2 class="card-title">地理逆编码工具</h2>
+                    </a>
+                    <p class="mb-0">[地图工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">在线实现经纬度批量查询对应地址等信息</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a href="{% url 'tool:gridview' %}">
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/grid.png' %}"
+                             alt="宜出行网格生成工具">
+                        <h2 class="card-title">渔网坐标生成工具</h2>
+                    </a>
+                    <p class="mb-0">[地图工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">将矩形经纬度范围划分为正方形网格</p>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="col-md-6 col-lg-4 col-xl-3 px-lg-2 mb-3">
+            <div class="card">
+                <div class="card-header p-2 tool-header">
+                    <a>
+                        <img class="w-25 float-left mr-2" src="{% static 'blog/img/draw.png' %}"
+                             alt="地图圈选工具">
+                        <h2 class="card-title">地图圈选工具</h2>
+                    </a>
+                    <p class="mb-0">[地图工具]</p>
+                </div>
+                <div class="card-body p-3 tool-des">
+                    <p class="card-text">可以在地图上画多边形，并支持导出多边形范围坐标数据,正在开发中</p>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+{% endblock %}

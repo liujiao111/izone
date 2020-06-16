@@ -1,0 +1,71 @@
+{% extends "tool/base_tool.html" %}
+{% load static %}
+
+{% block head_title %}腾讯位置大数据爬取{% endblock %}
+{% block metas %}
+<meta name="description" content="基于腾讯位置大数据实现的热力数据在线采集工具，可以采集指定范围内的热力数据">
+<meta name="keywords" content="腾讯位置大数据,腾讯位置大数据采集,热力数据在线采集,热力数据在线采集工具,腾讯人流量采集">
+{% endblock %}
+
+{% block tool_name %}腾讯位置大数据爬取{% endblock %}
+{% block left_content %}
+<div class="card-body p-0">
+    <h3 class="card-title pl-2 title-info">工具说明：</h3>
+    <ul>
+        <li>基于腾讯位置大数据开发的数据爬取工具</li>
+        <li>首先使用<a target="_blank" style="margin-top:30px;color:#33ABA0" href="{% url 'tool:coordpick' %}">坐标拾取工具</a>将需要爬取的城市最大经纬度和最小经纬度获取到，填入下面四个表单中</li>
+        <li>需要注意的是需要将经纬度变为整数，如113.23变为11323,23.33变为2333，否则会出问题
+        </li>
+    </ul>
+</div>
+<form method="get" action="{% url 'tool:tencent_data' %}">
+	{% if message %}
+			<div class="alert alert-danger" role="alert">{{ message }}</div>
+
+		  {% endif %}
+	<div class="mb-3">
+	    <div class="form-group">
+	        <label>最大经度：</label>
+	        <input type="text" class="form-control " name="max_lon"
+	               placeholder="例如：11930"
+	               required>
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+	    <div class="form-group">
+	        <label>最小经度：</label>
+	        <input type="text" class="form-control" name="min_lon"
+	               placeholder="例如：11823"
+	               required>
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+	    <div class="form-group">
+	        <label>最大纬度：</label>
+	        <input type="text" class="form-control" name="max_lat"
+	               placeholder="例如：3270"
+	               required>
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+	    <div class="form-group">
+	        <label>最小纬度：</label>
+	        <input type="text" class="form-control"  name="min_lat"
+	               placeholder="例如：3115"
+	               required>
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+	    <button type="submit" class="btn btn-info btn-sm rounded-0">确定</button>
+	    
+	</div>
+	
+	
+</form>
+
+<div style="height:100px;margin-left:100px">
+  <a style="margin-top:30px;color:#33ABA0" href="{% url 'tool:heatmap_visual' %}">你可能还需热力图可视化工具？点击这里快速实现可视化</a>
+</div>
+
+
+
+{% endblock %}
+
+{% block end_f %}
+{% endblock %}

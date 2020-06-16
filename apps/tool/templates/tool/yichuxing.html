@@ -1,0 +1,114 @@
+{% extends "tool/base_tool.html" %}
+{% load static %}
+
+{% block head_title %}宜出行人流量在线爬取{% endblock %}
+{% block metas %}
+<meta name="description" content="Sitemap主动推送是百度主动推送工具的升级版，可以在线实时自动提交链接，首先使用正则表达式批量抓取网站sitemap页面所有链接，然后调用百度站长平台的主动推送接口，批量推送链接，加快抓取速度和百度收录效率。">
+<meta name="keywords" content="宜出行人流量在线爬取,宜出行爬取,腾讯宜出行,宜出行热力图,人流量数据在线采集,热力数据,数据分析">
+<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+
+
+{% endblock %}
+
+
+
+{% block tool_name %}宜出行人流量在线爬取{% endblock %}
+{% block left_content %}
+<div class="card-body p-0">
+    <h3 class="card-title pl-2 title-info">工具说明：</h3>
+    <ul>
+        <li>基于宜出行开发的数据爬取工具</li>
+        <li>使用说明：<a target="_blank" style="color: #33ABA0;" href="http://www.mapboxx.cn/article/easygo/">宜出行人流量在线爬取工具使用说明</a></li>
+    	<li>试用密钥：ASDJRKDJER854J2J4J36, 有疑问请加qq：917961898</li>
+    	<li>坐标拾取需要WGS84坐标系：<a target="_blank" style="margin-top:30px;color:#33ABA0" href="{% url 'tool:coordpick' %}">坐标拾取系统</a>，热力图可视化：<a target="_blank" style="margin-top:30px;color:#33ABA0" href="http://www.mapboxx.cn:8080/">地理数据可视化平台</a></li>
+    </ul>
+</div>
+<form method="get" action="{% url 'tool:yichuxing_data' %}">
+	{% if message %}
+		  <p style="color:red;margin-left:150px;;height:30px;margin-bottom:20px">{{ message }}</p>
+		  {% endif %}
+	<div class="mb-3">
+
+
+		<div class="form-group">
+	        <label>网格点：</label>
+	               <textarea class="form-control" rows="3" name="ycx_points"  placeholder="例如：113.021745,25.797374;112.021745,25.7397374"></textarea>
+	        <small class="form-text text-muted">注：使用渔网坐标生成工具生成网格坐标点,地址： http://www.mapboxx.cn/tool/gridview/   一个qq一天内只能爬取125个网格，此处最多可填50个网格点坐标</small>
+	   </div>
+
+	   
+	    <div class="form-group">
+	        <label>cookie：</label>
+	               <textarea class="form-control" rows="3" name="ycx_cookie"  placeholder="格式：cookie1||cookie2"></textarea>
+	        <small class="form-text text-muted">注：多个cookie之间请用||分割开，否则无法使用!!!</small>
+	    </div>
+	    
+	    <div class="form-group">
+	        <label>密钥：</label>
+
+	        	<input type="text" class="form-control"  name="userKey"
+	               placeholder="例如：HDJGKEKRERR343432DVDGD"
+	               required>
+	        <small class="form-text text-muted">注：试用密钥：ASDJRKDJER854J2J4J36(一次只能爬取2个网格),正式使用的密钥请联系：917961898</small>
+	    </div>
+	    
+	    <label>坐标过滤(选填)：</label>
+	    
+	    <div class="form-group">
+	        <label>最大经度：</label>
+	        <input type="text" class="form-control " name="max_lon"
+	               placeholder="例如：119.30"
+	               >
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+	    <div class="form-group">
+	        <label>最小经度：</label>
+	        <input type="text" class="form-control" name="min_lon"
+	               placeholder="例如：118.23"
+	               >
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+	    <div class="form-group">
+	        <label>最大纬度：</label>
+	        <input type="text" class="form-control" name="max_lat"
+	               placeholder="例如：32.70"
+	               >
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+	    <div class="form-group">
+	        <label>最小纬度：</label>
+	        <input type="text" class="form-control"  name="min_lat"
+	               placeholder="例如：31.15"
+	               >
+	        <small class="form-text text-muted">注：</small>
+	    </div>
+	    
+	    <button type="submit" class="btn btn-info btn-sm rounded-0">确定</button>
+	    
+	</div>
+	
+	
+</form>
+
+<div style="height:100px;margin-left:100px">
+  <a style="margin-top:30px;color:#33ABA0" href="{% url 'tool:heatmap_visual' %}">你可能还需热力图可视化工具？点击这里快速实现可视化</a>
+</div>
+
+
+
+<script>
+	var extent = [110.118055, 18.980555 ,110.680555, 19.476388];
+	
+	var cellSide = 3;
+	var options = {units: 'kilometers'};
+	
+	var grid = turf.pointGrid(extent, cellSide, options);
+	
+	console.log(JSON.stringify(grid));
+
+</script>
+
+{% endblock %}
+
+{% block end_f %}
+{% endblock %}
